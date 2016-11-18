@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/loadTextView"
         android:textColor="@color/colorWhite"
-        android:textSize="25sp"
+        android:textSize="26sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
