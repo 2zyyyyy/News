@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.example.tony.news.Fragment.FirstpagerFragment;
 import com.example.tony.news.adapter.MainTabAdapter;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirstpagerFragment mFragment;
 
-    private List<FirstpagerFragment> mFirstpagerFragments;//存放Fragment的集合
+    private List<FirstpagerFragment> mFirstFragments;//存放Fragment的集合
 
     private MainTabAdapter mAdapter_title;//标题适配器
 
@@ -29,18 +30,45 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //初始化Fresco
+        Fresco.initialize(this);
         initData();//初始化标题数据
         initView();
+        initListener();
+    }
+
+    private void initListener() {
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            //tab被选中或被点击的事件回调
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                for (int i = 0; i < mFirstFragments.size(); i++) {
+                    mFirstFragments.get(position).setPosition(position);
+                }
+                mViewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void initData() {
         mList_title = getResources().getStringArray(R.array.tab_title);
-        mFirstpagerFragments = new ArrayList<>();
+        mFirstFragments = new ArrayList<>();
 
         //通过标题个数来创建Fragment
         for (int i = 0; i < mList_title.length; i++) {
             FirstpagerFragment first = new FirstpagerFragment();
-            mFirstpagerFragments.add(first);
+            mFirstFragments.add(first);
         }
     }
 
@@ -50,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
         mAdapter_title = new MainTabAdapter(getSupportFragmentManager()
-                , mFirstpagerFragments, mList_title);
+                , mFirstFragments, mList_title);
 
         mViewPager.setAdapter(mAdapter_title);
 

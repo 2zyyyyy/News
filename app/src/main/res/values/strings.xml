@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">步行街</string>
     <string name="tony">Tony</string>
+    <string name="username">月满轩尼诗</string>
+    <string name="loding">正在加载...</string>
+    <string name="shh">湿乎乎的话题</string>
 
     <array name="tab_title">
         <item>要闻</item>
         <item>财经</item>
-        <item>娱乐</item>
-        <item>奥运</item>
+        <item>体育</item>
         <item>军事</item>
         <item>科技</item>
         <item>历史</item>
+        <item>凤凰号</item>
     </array>
 </resources>
