@@ -39,7 +39,7 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
 
     List<String> banner_url;
 
-    private int now_num = 7;//记录当前存放的数据条数
+    private int now_num = 8;//记录当前存放的数据条数
 
     private RecyclerView mRecyclerView;
 
@@ -85,14 +85,16 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
             //状态发生变化时触发
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+                //super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE &&
                         lastVisibleItem + 1 == adapter.getItemCount()) {
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             now_num += LOADNUM;
-                            initData();
+                            if (now_num <= 100) {
+                                initData();
+                            }
                         }
                     }, 1000);
                 }
@@ -123,6 +125,8 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
     private void getData() {
         //轮播视图和item数据集合的初始化工作
         item_list = new ArrayList<>();
+        //设置总数量
+        //adapter.setDataCount(msg_list[mPosition].size());
         mBannerBean = new BannerBean();
 
         //初始化弹窗utils
@@ -140,7 +144,7 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
 
     //回调的更新界面方法
     @Override
-    public void upData(List<Data>[] msg_list) {
+    public synchronized void upData(List<Data>[] msg_list) {
         //关闭弹窗
         utils.closeProgressDialog();
 
@@ -152,13 +156,17 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
     //分配数据，填充布局
     public void initData() {
         if (msg_list != null) {
+
+            List<Data> data = msg_list[mPosition];
+
+            adapter.setDataCount(data.size());
+
             String[] img = new String[3];
             String[] title = new String[3];
             String[] toUrl = new String[3];
 
             item_list.clear();//清除缓存
 
-            List<Data> data = msg_list[mPosition];
             for (int i = 0; i < 3; i++) {
                 img[i] = data.get(i).getThumbnail();
                 title[i] = data.get(i).getTitle();
@@ -179,7 +187,9 @@ public class FirstpagerFragment extends Fragment implements JsonUtils.CallBackLi
     @Override
     public void onRefresh() {
         now_num += LOADNUM;//刷新操作执行后多显示4条数据
-        initData();
+        if (now_num <= msg_list[mPosition].size()) {
+            initData();
+        }
         swipe.setRefreshing(false);
     }
     private Handler mHandler = new Handler() {

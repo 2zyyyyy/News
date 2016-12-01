@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.tony.news.R;
@@ -32,6 +33,8 @@ public class FirstPapgerAdapter extends RecyclerView.Adapter {
     private List<Data> item_data;//轮播图片的路径
 
     private BannerBean bean;
+
+    private int dataCount;//记录当前共有多少条数据
 
     public FirstPapgerAdapter(Context context, List<Data> item_data, BannerBean bean) {
         this.mContext = context;
@@ -88,7 +91,12 @@ public class FirstPapgerAdapter extends RecyclerView.Adapter {
         } else if (holder instanceof FootViewHolder) {
             if (item_data.size() > 0) {
                 //判断有数据时在显示底部加载数据动画
-                ((FootViewHolder) holder).progress_lin.setVisibility(View.VISIBLE);
+                if (position + 2 == dataCount) {
+                    ((FootViewHolder) holder).textLoading.setText("没有更多了");
+                    ((FootViewHolder) holder).progressBar.setVisibility(View.GONE);
+                } else {
+                    ((FootViewHolder) holder).progress_lin.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -138,9 +146,13 @@ public class FirstPapgerAdapter extends RecyclerView.Adapter {
     //底部刷新的布局
     class FootViewHolder extends RecyclerView.ViewHolder {
         LinearLayout progress_lin;
+        ProgressBar progressBar;
+        TextView textLoading;
         public FootViewHolder(View itemView) {
             super(itemView);
             progress_lin = (LinearLayout) itemView.findViewById(R.id.progress_lin);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+            textLoading = (TextView) itemView.findViewById(R.id.text_loading);
         }
     }
     //RecyclerView item 的单击事件回调接口
@@ -152,5 +164,9 @@ public class FirstPapgerAdapter extends RecyclerView.Adapter {
 
     public void setMyItemClickListener(MyItemClickListener listener) {
         this.listener = listener;
+    }
+    //记录总数据条数，用于判断何时显示底部无更多数据
+    public void setDataCount(int count) {
+        this.dataCount = count;
     }
 }
